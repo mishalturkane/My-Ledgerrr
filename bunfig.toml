@@ -1,0 +1,13 @@
+# bunfig.toml — Bun runtime configuration
+
+[install]
+# Use exact versions from bun.lockb
+frozenLockfile = false
+
+[install.cache]
+# Disable cache in CI environments
+# disable = true
+
+[run]
+# Bun will auto-load .env, .env.local, .env.development, .env.production
+bun = true
