@@ -107,7 +107,8 @@ export async function GET(req: NextRequest) {
 
     const filename = `${project.name.replace(/\s+/g, "_")}_${type}_${format(refDate, "yyyy-MM")}.pdf`;
 
-    return new NextResponse(pdfBytes, {
+   
+return new NextResponse(Buffer.from(pdfBytes), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",

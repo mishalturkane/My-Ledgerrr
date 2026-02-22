@@ -30,7 +30,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-body bg-surface text-slate-800 dark:bg-surface-dark dark:text-slate-100 antialiased min-h-screen">
+      <body className="font-body bg-surface text-slate-800 dark:bg-surface-dark dark:text-slate-100 antialiased min-h-screen" suppressHydrationWarning> 
         <Providers>
           {children}
           <Toaster />

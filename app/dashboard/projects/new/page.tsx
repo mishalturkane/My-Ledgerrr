@@ -2,7 +2,7 @@
 // app/dashboard/projects/new/page.tsx
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateProjectSchema, type CreateProjectInput } from "@/lib/validations";
+import { CreateProjectFormSchema, type CreateProjectFormInput } from "@/lib/validations";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { createProject } from "@/store/slices/projectsSlice";
 import { addToast } from "@/store/slices/uiSlice";
@@ -20,27 +20,27 @@ export default function NewProjectPage() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<CreateProjectInput>({
-    resolver: zodResolver(CreateProjectSchema),
+  } = useForm<CreateProjectFormInput>({
+    resolver: zodResolver(CreateProjectFormSchema),
     defaultValues: {
       name: "",
       description: "",
       currency: "INR",
-      participants: ["", ""],
+      participants: [{ value: "" }, { value: "" }],
     },
   });
 
-  // react-hook-form doesn't natively support string arrays; cast is needed
   const { fields, append, remove } = useFieldArray({
     control,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    name: "participants" as any,
+    name: "participants",
   });
 
-  const onSubmit = async (data: CreateProjectInput) => {
+  const onSubmit = async (data: CreateProjectFormInput) => {
     const cleaned = {
       ...data,
-      participants: data.participants.filter((p) => p.trim().length > 0),
+      participants: data.participants
+        .map((p) => p.value.trim())
+        .filter((p) => p.length > 0),
     };
 
     if (cleaned.participants.length === 0) {
@@ -131,7 +131,8 @@ export default function NewProjectPage() {
               {fields.map((field, index) => (
                 <div key={field.id} className="flex items-center gap-2">
                   <input
-                    {...register(`participants.${index}`)}
+                  //@
+                    {...register(`participants.${index}.value`)}
                     className="input"
                     placeholder={`Participant ${index + 1} (e.g. Rahul)`}
                   />
@@ -151,7 +152,7 @@ export default function NewProjectPage() {
             {fields.length < 20 && (
               <button
                 type="button"
-                onClick={() => append("")}
+                onClick={() => append({ value: "" })}
                 className="btn-ghost text-sm mt-2"
               >
                 <Plus size={16} /> Add Participant

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 // ─── Project ──────────────────────────────────────────────────────────────────
 
+// API schema — participants as plain strings (used by backend/thunk)
 export const CreateProjectSchema = z.object({
   name: z
     .string()
@@ -17,6 +18,26 @@ export const CreateProjectSchema = z.object({
 });
 
 export type CreateProjectInput = z.infer<typeof CreateProjectSchema>;
+
+// Form schema — participants as objects (required by useFieldArray)
+export const CreateProjectFormSchema = z.object({
+  name: z
+    .string()
+    .min(2, "Project name must be at least 2 characters")
+    .max(80, "Project name is too long"),
+  description: z.string().max(300, "Description is too long").optional(),
+  currency: z.string().default("INR"),
+  participants: z
+    .array(
+      z.object({
+        value: z.string().min(1, "Participant name is required").max(50),
+      })
+    )
+    .min(1, "Add at least one participant")
+    .max(20, "Maximum 20 participants per project"),
+});
+
+export type CreateProjectFormInput = z.infer<typeof CreateProjectFormSchema>;
 
 // ─── Expense ──────────────────────────────────────────────────────────────────
 
